@@ -6,6 +6,8 @@ import 'package:flutter/rendering.dart';
 
 import 'base.dart';
 
+typedef StringCallback = void Function(String);
+
 class WebviewScaffold extends StatefulWidget {
 
   const WebviewScaffold({
@@ -30,7 +32,8 @@ class WebviewScaffold extends StatefulWidget {
     this.hidden = false,
     this.initialChild,
     this.allowFileURLs,
-    this.geolocationEnabled
+    this.geolocationEnabled,
+    this.onUrlChanged
   }) : super(key: key);
 
   final PreferredSizeWidget appBar;
@@ -54,6 +57,7 @@ class WebviewScaffold extends StatefulWidget {
   final Widget initialChild;
   final bool allowFileURLs;
   final bool geolocationEnabled;
+  final StringCallback onUrlChanged;
 
   @override
   _WebviewScaffoldState createState() => _WebviewScaffoldState();
@@ -75,6 +79,12 @@ class _WebviewScaffoldState extends State<WebviewScaffold> {
     _onDestroy = webviewReference.onDestroy.listen((_) {
       if (mounted) {
         Navigator.of(context).pop();
+      }
+    });
+
+    webviewReference.onUrlChanged.listen((url) {
+      if(widget.onUrlChanged != null){
+        widget.onUrlChanged(url);
       }
     });
 
